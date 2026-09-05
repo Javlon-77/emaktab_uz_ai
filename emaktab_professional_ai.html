@@ -1,0 +1,631 @@
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--surface-0);
+  color: var(--text-primary);
+}
+
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--surface-0);
+}
+
+.navbar {
+  background: var(--surface-2);
+  border-bottom: 0.5px solid var(--border);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.nav-left {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex: 1;
+}
+
+.nav-item {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: all 0.15s;
+}
+
+.nav-item:hover {
+  background: var(--surface-1);
+  color: var(--text-primary);
+}
+
+.nav-item.active {
+  color: var(--text-primary);
+  background: var(--surface-1);
+  font-weight: 500;
+}
+
+.nav-right {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.test-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-warning);
+  color: var(--text-warning);
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.test-time {
+  font-variant-numeric: tabular-nums;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.chat-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-0);
+  border-right: 0.5px solid var(--border);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.message {
+  display: flex;
+  gap: 0.75rem;
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message.user {
+  justify-content: flex-end;
+}
+
+.message-content {
+  max-width: 85%;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.message.user .message-content {
+  background: var(--fill-accent);
+  color: white;
+  border-radius: 12px 4px 12px 12px;
+}
+
+.message.ai .message-content {
+  background: var(--surface-1);
+  color: var(--text-primary);
+  border-radius: 4px 12px 12px 12px;
+}
+
+.chat-input-area {
+  padding: 1rem 1.5rem;
+  border-top: 0.5px solid var(--border);
+  background: var(--surface-0);
+}
+
+.chat-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: var(--fill-accent);
+  background: var(--surface-2);
+}
+
+.btn-send {
+  padding: 0.75rem 1.25rem;
+  background: var(--fill-accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: background 0.15s;
+}
+
+.btn-send:hover {
+  background: var(--fill-accent-hover);
+}
+
+.btn-send:disabled {
+  background: var(--border-strong);
+  cursor: not-allowed;
+}
+
+.sidebar {
+  width: 280px;
+  background: var(--surface-2);
+  border-left: 0.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.sidebar-toggle {
+  width: 100%;
+  padding: 1rem;
+  background: none;
+  border: none;
+  border-bottom: 0.5px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.sidebar-toggle:hover {
+  background: var(--surface-1);
+}
+
+.sidebar-menu {
+  flex: 1;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sidebar.collapsed .sidebar-menu {
+  gap: 0.5rem;
+}
+
+.menu-item {
+  padding: 0.75rem 1rem;
+  background: none;
+  border: 0.5px solid transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  transition: all 0.15s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.menu-item:hover {
+  background: var(--surface-1);
+  color: var(--text-primary);
+}
+
+.menu-item.active {
+  background: var(--bg-accent);
+  color: var(--text-accent);
+  border-color: var(--border-accent);
+}
+
+.sidebar.collapsed .menu-item {
+  padding: 0.75rem;
+  justify-content: center;
+}
+
+.sidebar.collapsed .menu-label {
+  display: none;
+}
+
+.menu-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 1rem;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 2rem;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  opacity: 0.5;
+}
+
+.typing-indicator {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  height: 1rem;
+}
+
+.typing-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  animation: typing 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% { opacity: 0.5; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-6px); }
+}
+
+.test-panel {
+  padding: 1.5rem;
+  background: var(--surface-1);
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border);
+}
+
+.test-header {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.test-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.test-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.test-timer {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.1rem;
+  color: var(--text-warning);
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  background: var(--fill-accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-weight: 500;
+}
+
+.btn-small:hover {
+  background: var(--fill-accent-hover);
+}
+
+.btn-small.secondary {
+  background: var(--surface-2);
+  color: var(--text-primary);
+  border: 0.5px solid var(--border-strong);
+}
+
+.btn-small.secondary:hover {
+  background: var(--surface-0);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-stronger);
+}
+</style>
+
+<div class="app-wrapper">
+  <div class="navbar">
+    <div class="nav-left">
+      <span style="font-weight: 600; font-size: 1rem; color: var(--text-primary);">emaktab.uz</span>
+      <button class="nav-item active" onclick="switchView('chat')">Chats</button>
+      <button class="nav-item" onclick="switchView('tasks')">Tasks</button>
+    </div>
+    <div class="nav-right">
+      <div class="test-badge" id="testBadge" style="display: none;">
+        <i class="ti ti-clock" style="font-size: 1rem;"></i>
+        <span class="test-time" id="testTimer">45:00</span>
+      </div>
+      <button class="nav-item" onclick="switchView('results')">Results</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="chat-panel">
+      <div class="chat-messages" id="chatMessages">
+        <div class="empty-state">
+          <div class="empty-icon">💬</div>
+          <div>Darsni tanlang va AI ga savol bering</div>
+          <div style="font-size: 0.85rem; opacity: 0.7;">Test, savol tuzish yoki dars matnini qayta ishlashni boshlaymiz</div>
+        </div>
+      </div>
+      
+      <div class="chat-input-area">
+        <div class="chat-input-wrapper">
+          <input type="text" class="chat-input" id="chatInput" placeholder="Savol yozing..." onkeypress="if(event.key==='Enter') sendMessage()">
+          <button class="btn-send" onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+      <button class="sidebar-toggle" onclick="toggleSidebar()">+</button>
+      
+      <div class="sidebar-menu">
+        <button class="menu-item active" onclick="selectTool('chat')">
+          <div class="menu-icon">💭</div>
+          <span class="menu-label">Chat</span>
+        </button>
+        
+        <button class="menu-item" onclick="selectTool('question')">
+          <div class="menu-icon">❓</div>
+          <span class="menu-label">Savollar</span>
+        </button>
+        
+        <button class="menu-item" onclick="selectTool('test')">
+          <div class="menu-icon">📝</div>
+          <span class="menu-label">Test</span>
+        </button>
+        
+        <button class="menu-item" onclick="selectTool('analysis')">
+          <div class="menu-icon">📊</div>
+          <span class="menu-label">Tahlil</span>
+        </button>
+        
+        <div style="flex: 1;"></div>
+        
+        <div style="padding: 1rem 0.75rem; border-top: 0.5px solid var(--border);">
+          <div class="menu-item" style="background: var(--surface-1); margin-bottom: 0.5rem;">
+            <div class="menu-icon">📚</div>
+            <span class="menu-label">Matematika</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); padding: 0.5rem; text-align: center;">7-sinf</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let testActive = false;
+let testTimeRemaining = 45 * 60;
+let sidebarCollapsed = false;
+let isThinking = false;
+
+const API_KEY = 'YOUR_ANTHROPIC_API_KEY'; // Bu yerga actual API key qo'ying
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebarCollapsed = !sidebarCollapsed;
+  if (sidebarCollapsed) {
+    sidebar.classList.add('collapsed');
+  } else {
+    sidebar.classList.remove('collapsed');
+  }
+}
+
+function selectTool(tool) {
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  event.target.closest('.menu-item').classList.add('active');
+  
+  if (tool === 'test') {
+    startTest();
+  }
+  
+  const msg = {
+    'chat': 'Chat rejimi faol',
+    'question': 'Savollar yaratish rejimi faol',
+    'test': 'Test rejimi faol',
+    'analysis': 'Tahlil rejimi faol'
+  }[tool];
+  
+  addMessage('ai', msg);
+}
+
+function switchView(view) {
+  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  if (view === 'results') {
+    clearMessages();
+    addMessage('ai', 'Test natijalarini ko\'rish: 82% o\'rtacha ball, 15 talaba imtihonni yakunladi.');
+  }
+}
+
+function startTest() {
+  testActive = true;
+  testTimeRemaining = 45 * 60;
+  document.getElementById('testBadge').style.display = 'flex';
+  
+  const timer = setInterval(() => {
+    testTimeRemaining--;
+    const mins = Math.floor(testTimeRemaining / 60);
+    const secs = testTimeRemaining % 60;
+    document.getElementById('testTimer').textContent = 
+      String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    
+    if (testTimeRemaining <= 0) {
+      clearInterval(timer);
+      testActive = false;
+      document.getElementById('testBadge').style.display = 'none';
+      addMessage('ai', 'Test vaqti tugadi!');
+    }
+  }, 1000);
+  
+  addMessage('ai', 'Test boshlandi. 45 minut vaqtingiz bor. 10 ta savol bugungi dars mavzusidan.');
+}
+
+function addMessage(sender, content) {
+  const container = document.getElementById('chatMessages');
+  
+  if (container.querySelector('.empty-state')) {
+    container.innerHTML = '';
+  }
+  
+  const messageEl = document.createElement('div');
+  messageEl.className = 'message ' + sender;
+  
+  const contentEl = document.createElement('div');
+  contentEl.className = 'message-content';
+  contentEl.textContent = content;
+  
+  messageEl.appendChild(contentEl);
+  container.appendChild(messageEl);
+  container.scrollTop = container.scrollHeight;
+}
+
+function clearMessages() {
+  document.getElementById('chatMessages').innerHTML = 
+    '<div class="empty-state"><div class="empty-icon">📊</div><div>Natijalar</div></div>';
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  
+  if (!message || isThinking) return;
+  
+  addMessage('user', message);
+  input.value = '';
+  
+  isThinking = true;
+  const container = document.getElementById('chatMessages');
+  const typingEl = document.createElement('div');
+  typingEl.className = 'message ai';
+  typingEl.innerHTML = '<div class="message-content"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
+  container.appendChild(typingEl);
+  container.scrollTop = container.scrollHeight;
+  
+  try {
+    // Haqiqiy Claude API chaqirig'i
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [{role: 'user', content: `O'zbek tilida javob ber, emaktab o'quvchisi sifatida: ${message}`}]
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error('API xatosi');
+    }
+    
+    const data = await response.json();
+    const reply = data.content[0].text;
+    
+    typingEl.remove();
+    addMessage('ai', reply);
+  } catch (error) {
+    typingEl.remove();
+    addMessage('ai', 'Afsus, AI javob bera olmadi. Anthropic API kalitini tekshiring.');
+  }
+  
+  isThinking = false;
+}
+</script>
